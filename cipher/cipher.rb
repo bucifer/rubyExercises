@@ -1,4 +1,4 @@
-@base = "abcdefghijklmnopqrstuvwxyz".split(//)
+@alphabet = ("a".."z").to_a
 
 
 
@@ -21,7 +21,7 @@ def decoder(str)
 	wordCode = []	
 	chopWord = str.split(//)
 		for letter in chopWord
-			wordCode << @base.index(letter)
+			wordCode << @alphabet.index(letter)
 		end
 	return wordCode
 end
@@ -29,7 +29,7 @@ end
 def translator(array)
 	word = []
 	for number in array
-		word << @base[number]
+		word << @alphabet[number]
 	end
 	return word.join 
 end
@@ -40,8 +40,8 @@ def jump(sentence, jumps)
 		for array in arrays
 			for i in (0...array.size)
 				total = array[i] + jumps
-				if total > (@base.size-1) #maximum possible index of the alphabet (25)
-					array[i]  = total % (@base.size)
+				if total > (@alphabet.size-1) #maximum possible index of the alphabet (25)
+					array[i]  = total % (@alphabet.size)
 				else #when it's normal
 					array[i] = array[i] + jumps
 				end
@@ -50,8 +50,8 @@ def jump(sentence, jumps)
 	else
 		for i in (0...arrays.size)
 				total = arrays[i] + jumps
-				if total > (@base.size-1) #maximum possible index of the alphabet (25)
-					arrays[i]  = total % (@base.size)
+				if total > (@alphabet.size-1) #maximum possible index of the alphabet (25)
+					arrays[i]  = total % (@alphabet.size)
 				else #when it's normal
 					arrays[i] = arrays[i] + jumps
 				end
