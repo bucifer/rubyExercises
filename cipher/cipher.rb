@@ -1,78 +1,46 @@
-@alphabet = ("a".."z").to_a
+@lowerAlphabet = ("a".."z").to_a
+@upperAlphabet = ("A".."Z").to_a
+@punctuation = ("!?.,@#$&*'\"").split(//)
 
-
-
-def multidecoder(sentence)
-	choppedSentences = sentence.split
-	result = []
-		if choppedSentences.size == 1
-			return decoder(sentence)
-		else
-			for word in choppedSentences
-				result << decoder(word)
-			end
-		end
-	return result
-end
-
-def decoder(str)
-#this function will return one word's individual letters decoded into numbers
-#the return result will be one array with each number
-	wordCode = []	
-	chopWord = str.split(//)
-		for letter in chopWord
-			wordCode << @alphabet.index(letter)
-		end
-	return wordCode
-end
-
-def translator(array)
-	word = []
-	for number in array
-		word << @alphabet[number]
-	end
-	return word.join 
-end
-
-def jump(sentence, jumps)
-	arrays = multidecoder(sentence)
-	if arrays[0].is_a?(Array)
-		for array in arrays
-			for i in (0...array.size)
-				total = array[i] + jumps
-				if total > (@alphabet.size-1) #maximum possible index of the alphabet (25)
-					array[i]  = total % (@alphabet.size)
-				else #when it's normal
-					array[i] = array[i] + jumps
-				end
-			end
-		end
-	else
-		for i in (0...arrays.size)
-				total = arrays[i] + jumps
-				if total > (@alphabet.size-1) #maximum possible index of the alphabet (25)
-					arrays[i]  = total % (@alphabet.size)
-				else #when it's normal
-					arrays[i] = arrays[i] + jumps
-				end
-			end
-	end
-	return arrays
-end
-
-def cipher(sentence, jumps)
-	arrays = jump(sentence, jumps)
-	result = []
-	if arrays[0].is_a?(Array)
-		for array in arrays
-			result << translator(array)
+def jumpOne(str,jump)
+#this helper function will decode ONE STRING to numbers, jump the numbers, and then translate that word
+	translated_str = ""
+	str.split(//).each do |char|
+			if @lowerAlphabet.include? (char)
+				jumped_index = @lowerAlphabet.index(char) + jump
+				translated_str << @lowerAlphabet[loopAround(jumped_index)]
+			elsif @upperAlphabet.include? (char)
+				jumped_index = @upperAlphabet.index(char) + jump
+				translated_str << @upperAlphabet[loopAround(jumped_index)]
+			elsif @punctuation.include? (char)
+				translated_str << char
+			end	
 		end	
-	else
-		return translator(arrays)	
-	end
-	return result.join(" ")
+	return translated_str
 end
 
+def loopAround (jumped_index)
+	#this helper function will help you loop around whenever the jumps get really huge Ex) jump 50 
 
-p cipher("i love your mom", 25)
-p cipher("G dog is your MOM", 22)
+	if jumped_index >= @lowerAlphabet.size
+		jumped_index = jumped_index % @lowerAlphabet.size
+		return jumped_index
+	else
+		return jumped_index
+	end
+end
+
+def cipher(sentence, jump)
+	array = sentence.split()
+	result = []
+	for word in array
+		result << jumpOne(word, jump)
+	end
+	result.join(" ")
+end
+
+#testing
+puts loopAround(26)
+puts jumpOne("zzz", 2)
+puts cipher("I love eating steaks at Molly's steakhouse in Queens!!", 5)
+puts cipher("JUMP JUMP JUMP JUMP WOOOOO", 500)
